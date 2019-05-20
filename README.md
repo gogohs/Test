@@ -111,28 +111,52 @@ $ sudo reboot
 ** 대상 : Cluster 전체 Host **
 <ul>
  <li> NTP 설치 </li>
- <li> NTP 서버 설정</li>
- <li> NTP 서비스 등록</li>
- <li> NTP 서버 설정</li>
+ <li> NTP 서버 설정 [/etc/ntp.conf 파일에서 기본설정 서버를 주석처리 후 한국의 ntp서버 추가]</li>
+ <li> NTP 서비스 시작</li>
+ <li> NTP 서비스 시작프로그램에 등록</li>
+ <li> NTP 서비스 작동여부 확인</li>
 </ul>
 
 ```
 $ yum install -y ntp
 
+$ sudo vi /etc/ntp.conf
+# Use public servers from the pool.ntp.org project. 
+# Please consider joining the pool (http://www.pool.ntp.org/join.html). 
+#server 0.centos.pool.ntp.org 
+#server 1.centos.pool.ntp.org 
+#server 2.centos.pool.ntp.org
+server kr.pool.ntp.org 
+server time.bora.net
+server time.kornet.net
+
+$ systemctl start ntpd
+$ systemctl enable ntpd
+$ ntpq -p
 ```
 
-transparent_hugepage 설정
+#### 5. 추가적인 설정 [성능이슈]
+[참고]https://www.cloudera.com/documentation/enterprise/latest/topics/cdh_admin_performance.html
+## 5-1. Disable the tuned Service [시스템 모니터링 및 시스템 설정에 대한 동적튜닝을 제공하는 데몬]
 
+```
+$ systemctl start tuned        // Ensure that the tuned service is started
+$ tuned-adm off                // Turn the tuned service off
+$ tuned-adm list               // Ensure that there are no active profiles
+-> No current active profile   // The output should contain the following line
+
+$ systemctl stop tuned         // shutdown the service
+$ systemctl disable tuned      // disable the service
+```
+
+#5-1. transparent huge page 설정
+disable tuned 설정
 
 #### 3. swappiness 설정
 ```
 $ sysctl -w vm.swappiness=0
 $ echo 'vm.swappiness=0' >> /etc/sysctl.conf
 ```
-
-
-#### 5. NTP 동기화
-transparent_hugepage 설정
 
 
 ## CDH install
