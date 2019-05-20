@@ -458,7 +458,7 @@ $ netstat -antp | grep 7180                                     //서버의 defa
   > a. 여기 단계에서 Disk Full 발생하여 Roll-back 재시작의 무한반복 
   
 
-![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
-![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/result1.png)
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/result2.png)
 
 
