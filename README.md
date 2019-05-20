@@ -63,14 +63,14 @@ $ systemctl list-unit-files --type=service //자동실행 설정된 서비스 �
 
 ## Pre-Install Step
 
-#### 1. yum update
+### 1. yum update
 
 ```
 $ sudo yum update
 $ sudo yum install -y wget
 ```
 
-#### 2. firewall 정지 [방화벽 정지, CentOs 7부터 iptables -> firewalld 변경]
+### 2. firewall 정지 [방화벽 정지, CentOs 7부터 iptables -> firewalld 변경]
 ** 대상 : Cluster 전체 Host **
 <ul>
  <li> stop : 현재 작동중인 firewall 서비스 종료 </li>
@@ -82,7 +82,7 @@ $ systemctl stop firewalld.service
 $ systemctl disable firewalld.service
 ```
 
-#### 3. Selinux 정지 [보안 프로그램]
+### 3. Selinux 정지 [보안 프로그램]
 ** 대상 : Cluster 전체 Host **
 <ul>
  <li> sestatus : Selinux 동작모드 확인 [Default : enforcing] </li>
@@ -107,7 +107,7 @@ SELINUXTYPE=targeted
 $ sudo reboot
 ```
 
-#### 4. NTP 설정 [Cluster host 시간 동기화]
+### 4. NTP 설정 [Cluster host 시간 동기화]
 ** 대상 : Cluster 전체 Host **
 <ul>
  <li> NTP 설치 </li>
@@ -135,9 +135,12 @@ $ systemctl enable ntpd
 $ ntpq -p
 ```
 
-#### 5. 추가적인 설정 [성능이슈]
+### 5. Passwordless SSH connection setting
+
+### 6. 추가적인 설정 [성능이슈]
 [참고]https://www.cloudera.com/documentation/enterprise/latest/topics/cdh_admin_performance.html
-## 5-1. Disable the tuned Service [시스템 모니터링 및 시스템 설정에 대한 동적튜닝을 제공하는 데몬]
+
+#### 6-1. Disable the tuned Service [시스템 모니터링 및 시스템 설정에 대한 동적튜닝을 제공하는 데몬]
 
 ```
 $ systemctl start tuned        // Ensure that the tuned service is started
@@ -149,13 +152,27 @@ $ systemctl stop tuned         // shutdown the service
 $ systemctl disable tuned      // disable the service
 ```
 
-#5-1. transparent huge page 설정
-disable tuned 설정
+#### 6-2. Disabling Transparent Hugepages
 
-#### 3. swappiness 설정
 ```
-$ sysctl -w vm.swappiness=0
-$ echo 'vm.swappiness=0' >> /etc/sysctl.conf
+sudo vi /etc/rc.d/rc.local
+	add -> 
+echo "never" > /sys/kernel/mm/transparent_hugepage/enabled
+echo "never" > /sys/kernel/mm/transparent_hugepage/defrag
+
+sudo chmod +x /etc/rc.d/rc.local
+sudo vi /etc/default/grub
+   add -> transparent_hugepage=never (on line GRUB_CMDLINE_LINUX )
+grub2-mkconfig -o /boot/grub2/grub.cfg
+```
+
+#### 6-3/ Setting the vm.swappiness Linux Kernel Parameter
+
+vm.swappiness[0~100] 값이 클수록 inactive process들에 대한 메모리 스왑이 빈번히 발생
+Hadoop Cluster 사용에는 스왑이 적게 발생하도록 세팅하는 것이 적합 [vm.swappiness 1]
+```
+$ cat /proc/sys/vm/swappiness      // 현재 세팅값 확인
+$ sudo sysctl -w vm.swappiness=1   // 스왑값 
 ```
 
 
