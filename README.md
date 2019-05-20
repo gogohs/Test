@@ -19,35 +19,112 @@
 </ul>
 
 
-## 설치기준
+## 환경구성
 <ul>
- <li> Cloudera 5.16 </li>
  <li> CENTOS 7 </li>
  <li> JDK 1.78 </li>
+ <li> CDH 5.16</li>
 </ul>
 
+## AWS Instance 접속
+<ul>
+ <li> Git bash 접속하여 AWS 접속을 위한 key파일 디렉토리로 이동 [skcc.pem] </li>
+ <li> AWS CentOs Instance 접속계정명 : centos </li>
+</ul>
+
+```
+$ ssh -i skcc.pem centos@13.124.227.184
+```
+
+## CentOS 7 관련
+<ul>
+ <li> service -> systemctl </li>
+ <li> chkconfig -> systemctl </li>
+ <li> iptables -> firewalld </li>
+</ul>
+
+```
+<CentOS 6>
+$ service cloudera-scm-server start  //cloudera-scm-server 서비스 시작
+$ service cloudera-scm-server stop   //cloudera-scm-server 서비스 종료
+$ service cloudera-scm-server status //cloudera-scm-server 서비스 상태
+$ chkconfig cloudera-scm-server on   //서버 부팅 시 자동실행 설정
+$ chkconfig cloudera-scm-server off  //서버 부팅 시 자동실행 해제
+
+<CentOS 7>
+$ systemctl start cloudera-scm-server  //cloudera-scm-server 서비스 시작
+$ systemctl stop cloudera-scm-server   //cloudera-scm-server 서비스 종료
+$ systemctl status cloudera-scm-server //cloudera-scm-server 서비스 상태 
+$ systemctl enable cloudera-scm-server //서버 부팅 시 자동실행 설정
+$ systemctl disable cloudera-scm-server//서버 부팅 시 자동실행 해제
+$ systemctl is-enable 서비스명          //서비스가 자동실행 설정상태인지 확인
+$ systemctl list-unit-files --type=service //자동실행 설정된 서비스 리스트 
+```
 
 ## Pre-Install Step
 
-#### 1. install wget
+#### 1. yum update
+
 ```
-yum install -y wget
+$ sudo yum update
+$ sudo yum install -y wget
 ```
 
-#### 2. Master 접속
-```
-ssh -i skcc.pem centos@13.124.227.184
-```
-##### 결과 / Last login: Mon May 20 01:25:33 2019 from 211.45.60.5
-
-#### 3. Iptables 정지 [방화벽 정지]
+#### 2. firewall 정지 [방화벽 정지, CentOs 7부터 iptables -> firewalld 변경]
 ** 대상 : Cluster 전체 Host **
+<ul>
+ <li> stop : 현재 작동중인 firewall 서비스 종료 </li>
+ <li> disable : OS 부팅 시 firewall 자동실행 해제 </li>
+</ul>
+
 ```
-$ service iptables stop
-$ chkconfig iptables off
+$ systemctl stop firewalld.service
+$ systemctl disable firewalld.service
 ```
 
-#### 4. swappiness 설정
+#### 3. Selinux 정지 [보안 프로그램]
+** 대상 : Cluster 전체 Host **
+<ul>
+ <li> sestatus : Selinux 동작모드 확인 [Default : enforcing] </li>
+ <li> /etc/selinux/config 파일을 수정하여 상태를 변경 [enforcing -> disabled] </li>
+</ul>
+
+```
+$ sestatus
+$ sudo  vi /etc/selinux/config
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+# enforcing - SELinux security policy is enforced.
+# permissive - SELinux prints warnings instead of enforcing.
+# disabled - SELinux is fully disabled.
+SELINUX=disabled
+# SELINUXTYPE= type of policy in use. Possible values are:
+# targeted - Only targeted network daemons are protected.
+# strict - Full SELinux protection.
+SELINUXTYPE=targeted
+
+$ sudo reboot
+```
+
+#### 4. NTP 설정 [Cluster host 시간 동기화]
+** 대상 : Cluster 전체 Host **
+<ul>
+ <li> NTP 설치 </li>
+ <li> NTP 서버 설정</li>
+ <li> NTP 서비스 등록</li>
+ <li> NTP 서버 설정</li>
+</ul>
+
+```
+$ yum install -y ntp
+
+```
+
+transparent_hugepage 설정
+
+
+#### 3. swappiness 설정
 ```
 $ sysctl -w vm.swappiness=0
 $ echo 'vm.swappiness=0' >> /etc/sysctl.conf
