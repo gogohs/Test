@@ -177,50 +177,54 @@ $ sudo sysctl -w vm.swappiness=1   // 스왑값
 
 
 ## CDH install
-#### Configure a repository for cloudera manager
+[참고]https://www.cloudera.com/documentation/enterprise/5-15-x/topics/install_cm_server.html
+
+### Configure a repository for cloudera manager
 1. Download the cloudera-manager.repo file for your OS version to the /etc/yum.repos.d/ directory on the Cloudera Manager Server host
 ```
 $sudo wget https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/cloudera-cdh5.repo -P /etc/yum.repos.d/
 ```
+
 2. Import the repository signing GPG key [RHEL 7]
 ```
 $sudo rpm --import https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/RPM-GPG-KEY-cloude 
 ```
 
+### Install JDK on all hosts
 
-#### Configure a repository for cloudera manager
-[참고] https://zetawiki.com/wiki/CentOS_JDK_%EC%84%A4%EC%B9%98
-
-#### yum 설치가능 java 리스트 확인
+1. 설치가능한 자바 리스트 확인
 ```
 yum list java*jdk-devel
 ```
 
-#### Install Java
+2. 1.7버전의 JDK 설치 
 ```
 yum install java-1.7.0-openjdk-devel.x86_64
 ```
-##### 설치확인 :
+
+3. 설치확인
+```
 [centos@ip-172-31-46-77 ~]$ java -version
 java version "1.7.0_221"
 OpenJDK Runtime Environment (rhel-2.6.18.0.el7_6-x86_64 u221-b02)
 OpenJDK 64-Bit Server VM (build 24.221-b02, mixed mode)
 [centos@ip-172-31-46-77 ~]$ javac -version
 javac 1.7.0_221
+```
 
+### Install Cloudera Manager Packages [수동버전]
 
-## 시스템 재부팅(sudo reboot)
-#### Cloudera-manager server설치 [수동버전]
 1.cloudera manager를 설치할 호스트에서 아래의 명령어 실행
 ```
 $sudo yum install cloudera-manager-daemons cloudera-manager-server
 ```
+
 2.Cluster 모든 호스트에 대해 cloudera agent 설치
 ```
 $sudo yum install cloudera-manager-daemons cloudera-manager-agent
 ```
 
-#### Cloudera-manager 설치 [자동버전]
+### [참고] Cloudera-manager 설치 [자동버전]
 ```
 1.  $ wget http://archive.cloudera.com/cm5/installer/5.15.2/cloudera-manager-installer.bin
 ```
@@ -228,12 +232,10 @@ $sudo yum install cloudera-manager-daemons cloudera-manager-agent
 > b. 5.15.0 설치파일로 설치하니까 5.16버전이 깔렸음  
 > c. 설치제거 후 재시도  $ sudo /usr/share/cmf/uninstall-cloudera-manager.sh
 
-
 ```
 2.  $ wget http://archive.cloudera.com/cm5/installer/5.15.0/cloudera-manager-installer.bin
 ```  
 > a. 현재 디렉토리에 설치 파일 다운로드 됨
-
 
 ```
 3.  $ chmod u+x cloudera-manager-installer.bin
@@ -249,16 +251,93 @@ $sudo yum install cloudera-manager-daemons cloudera-manager-agent
 > a. 접속정보 : 13.124.227.184:7180 [ admin / admin]
 
 
-#### Database  [MariaDB 설치]
+### Install Database  [MariaDB 설치]
 [참고]https://www.cloudera.com/documentation/enterprise/5-15-x/topics/cm_ig_installing_configuring_dbs.html
+
 <ol>
-<li>MariaDB 설치</li>
-<li>JDBC Connector 설치</li>
+<li>MariaDB를 사용하여 RDB가 필요한 서비스들을 커버</li>
+<li>JDBC Connector 설치필요</li>
 <li>필요한 계정 생성</li> 
 </ol>
 
+
+#### 1. Installing MariaDB Server
+
 ```
-Table
+$ sudo yum install mariadb-server
+```
+
+#### 2. Configuring and Starting the MariaDB Server [root / admin]
+
+secure_installation 과정을 진행하며 root password 및 보안관련 설정
+Default root 비밀번호는 공백
+```
+$ sudo systemctl enable mariadb
+$ sudo systemctl start mariadb
+$ sudo /usr/bin/mysql_secure_installation
+
+[...]
+Enter current password for root (enter for none):
+OK, successfully used password, moving on...
+[...]
+Set root password? [Y/n] Y
+New password:
+Re-enter new password:
+[...]
+Remove anonymous users? [Y/n] Y
+[...]
+Disallow root login remotely? [Y/n] N
+[...]
+Remove test database and access to it [Y/n] Y
+[...]
+Reload privilege tables now? [Y/n] Y
+[...]
+All done!  If you've completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!
+```
+
+#### 3. Installing the MySQL JDBC Driver for MariaDB
+
+* MariaDB JDBC driver is not supported. Install and use the MySQL JDBC driver instead.
+* Install the JDBC driver on the Cloudera Manager Server host, as well as any other hosts 
+  running services that require database access
+  
+3-1. Download the MySQL JDBC driver from http://www.mysql.com/downloads/connector/j/5.1.html (in .tar.gz format).
+Extract the JDBC driver JAR file from the downloaded file
+
+```
+$ tar zxvf mysql-connector-java-5.1.46.tar.gz
+```
+
+3-2. Copy the JDBC driver, renamed, to /usr/share/java/. If the target directory does not yet exist, 
+     create it. For example
+
+```
+$ sudo mkdir -p /usr/share/java/
+$ cd mysql-connector-java-5.1.46
+$ sudo cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
+```
+
+#### 4.Creating Databases for Cloudera Software
+
+4-1. Log in as the root user, or another user with privileges to create database and grant privileges:
+```
+$ mysql -u root -p
+```
+
+4-2. Create databases for each service deployed in the cluster 
+     Configure all databases to use the utf8 character set.
+
+```
+MariaDB > CREATE DATABASE <database> DEFAULT CHARACTER SET <character set> DEFAULT COLLATE utf8_general_ci;
+        > Query OK, 1 row affected (0.00 sec)
+MariaDB > GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';
+        > Query OK, 1 row affected (0.00 sec)
+MariaDB > SHOW DATABASES;  // Confirme that you have created all  Databased
+
+<Table>
 CREATE DATABASE scm DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE amon DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE rman DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
@@ -268,10 +347,8 @@ CREATE DATABASE sentry DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE nav DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE navms DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE oozie DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
-```
 
-```
-권한
+<권한>
 GRANT ALL ON scm.* TO  'scm'@'%' IDENTIFIED BY 'scm';   
 GRANT ALL ON amon.* TO  'amon'@'%' IDENTIFIED BY 'amon';   
 GRANT ALL ON rman.* TO  'rman'@'%' IDENTIFIED BY 'rman';  
