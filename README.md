@@ -137,6 +137,63 @@ $ ntpq -p
 
 ### 5. Passwordless SSH connection setting
 
+#### 1. local에서 master 및 slave 서버 ssh로 붙기
+-- skcc.pem 파일이 있는 디렉토리로 이동. 
+-- $sudo ssh -i skcc.pem 계정(centos)@ip  로 연결
+
+#### 2. 모든 서버의 root계정 passwd 설정.
+
+```
+$sudo su 
+```
+-- passwd 를 admin으로 입력.
+
+#### 3. 모든 서버에서 host 파일에 서버정보입력
+-- /etc로 이동.
+```
+sudo vi etc/hosts
+
+private ip1 master
+private ip2 slave1
+private ip3 slave2
+private ip4 slave3
+private ip5 slave4
+```
+
+#### 4. 모든 서버에서 sshd_config 파일 편집
+
+```
+$ sudo vi /etc/ssh/sshd_config 
+```
+-- PasswordAuthentication yes로 설정 및 저장.
+
+#### 5. 설정 후 서비스 restart
+
+```
+$sudo service sshd restart
+```
+
+#### 6. (master노드만) ssh 용 public key 생성하기     
+
+``` 
+$ssh-keygen
+```
+
+#### 7. 1~5번까지 각 노드에서 완료 후 master노드에서 slave노드로 public key 정보 복사하기.
+
+```
+$cd /.ssh 이동
+$sudo ssh-copy-id -i ~/.ssh/id_rsa.pub slave4.
+```
+-- (permission denied 문제가 발생하면 앞의 config 파일 및 서비스 재시작 여부 확인)
+     
+#### 8.  master root계정에서 ssh로 slave에 접속하기.
+
+```
+$sudo su
+$ssh hostname
+```
+
 ### 6. 추가적인 설정 [성능이슈]
 [참고]https://www.cloudera.com/documentation/enterprise/latest/topics/cdh_admin_performance.html
 
@@ -401,54 +458,7 @@ $ netstat -antp | grep 7180                                     //서버의 defa
   > a. 여기 단계에서 Disk Full 발생하여 Roll-back 재시작의 무한반복 
   
 
+![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
+![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
 
-## MASTER 및 SLAVE 노드 SSH 연결 PROCESS
-
-#### 1. local에서 master 및 slave 서버 ssh로 붙기
--- skcc.pem 파일이 있는 디렉토리로 이동. 
--- $sudo ssh -i skcc.pem 계정(centos)@ip  로 연결
-
-  
-#### 2.  모든 서버의 root계정 passwd 설정.
-```
-$sudo su 
-```
--- passwd 를 admin으로 입력.
-
-
-#### 3.  모든 서버에서 host 파일에 서버정보입력
--- /etc로 이동.
-```
-sudo vi etc/hosts
-```
--- public ip hostname 설정 후 저장.
-
-#### 4.   모든 서버에서 sshd_config 파일 편집
-```
-$ sudo vi /etc/ssh/sshd_config 
-```
--- PasswordAuthentication yes로 설정 및 저장.
-
-#### 5.  설정 후 서비스 restart
-```
-$sudo service sshd restart
-```
-
-#### 6. (master노드만) ssh 용 public key 생성하기     
-``` 
-$ssh-keygen
-```
-
-#### 7. 1~5번까지 각 노드에서 완료 후 master노드에서 slave노드로 public key 정보 복사하기.
-```
-$cd /.ssh 이동
-$sudo ssh-copy-id -i ~/.ssh/id_rsa.pub slave4.
-```
--- (permission denied 문제가 발생하면 앞의 config 파일 및 서비스 재시작 여부 확인)
-     
-#### 8.  master root계정에서 ssh로 slave에 접속하기.
-```
-$sudo su
-$ssh hostname
-```
 
