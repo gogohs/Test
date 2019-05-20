@@ -4,6 +4,8 @@
  <li> 09232 고현숙 </li>
  <li> 09277 박한주 </li>
  <li> 09340 이호영 </li>
+ 
+![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
 </ul>
 
 ## 설치기준
