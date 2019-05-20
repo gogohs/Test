@@ -360,35 +360,46 @@ GRANT ALL ON navms.* TO  'navms'@'%' IDENTIFIED BY 'navms';
 GRANT ALL ON oozie.* TO  'oozie'@'%' IDENTIFIED BY 'oozie';  
 ```
 
-#### Set up the Cloudera Manager Database
-1.scm_prepare_database.sh 사용하여 configuration 진행  
-[MariaDB의 경우 세팅할때 mysql 옵션으로 넣어준다.]
+### Set up the Cloudera Manager Database
+
+#### 1.scm_prepare_database.sh 사용하여 configuration 진행  
+
+MariaDB의 경우 세팅할때 mysql 옵션 사용
 ```
 파일명 :  /usr/share/cmf/schema/scm_prepare_database.sh 
-실행명 : sudo ./scm_prepare_database.sh mysql scm scm
+실행예 : sudo ./scm_prepare_database.sh mysql scm scm
 ```
 
-2.cloudera-scm-manager Database 설정을 완료한 후 서버 재기동을 해보면 에러없이 서버가 정상적으로 켜짐을 확인할 수 있다.    
-> a. $ service cloudera-scm-server restart / status / stop / start / reset  
-> b. 로그확인 : tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log  
+#### 2.cloudera-scm-manager Database 설정 후 재기동 시, 에러없이 서버가 정상적으로 올라감   
 
-3. Cloudera manager default port에 서비스가 떠 있는 것을 확인할 수 있다.  
-> a. $ netstat -antp | grep 7180
+```
+$ systemctl cloudera-scm-server restart
+$ tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log  //로그확인
+$ netstat -antp | grep 7180                                     //서버의 default port도 떴다.
+```
 
-#### Cloudera Manager Web UI : Install CDH and Other Software
-1.Specify hosts for your CDH cluster installation
-2.Select Repository
-3.Accept JDK License
+### Cloudera Manager Web UI : Install CDH and Other Software
+
+#### 1.Specify hosts for your CDH cluster installation
+
+#### 2.Select Repository
+#### 3.Accept JDK License
  > a. cloudera manager 호스트에만 JDK를 깔았기 때문에 설치하기로 설정해야 함
-4. Single User Mode
+
+#### 4. Single User Mode
  > a. 체크하지 않음
-5. Enter Login Credentials
+
+#### 5. Enter Login Credentials
  > a. root 계정으로 접속하기 위한 비밀번호를 설정해야 함
- > b. root로 접속 / 비밀번호 : admin [설정이 그렇게 되었음]
-6. Install Agents
-> a. 5개 서버의 [Private IP FQDN] 정보 5줄을 입력하고 다음으로 넘어가면 연결이 실패했다고 나온다.
-7.Install Parcels 
-> a. Hadoop cluster serivce 선택하여 설치 [HDFS / YARN / Zookeeper  3개만 ]
+ > b. root로 접속 / 비밀번호 : admin [현재 세팅이 그렇게 되었음]
+
+#### 6. Install Agents
+  > a. 5개 서버의 [Private IP FQDN] 정보 5줄을 입력하고 다음으로 넘어가면 검색결과 확인
+
+
+#### 7.Install Parcels 
+  > a. 여기 단계에서 Disk Full 발생하여 Roll-back 재시작의 무한반복 
+  
 
 
 ## MASTER 및 SLAVE 노드 SSH 연결 PROCESS
@@ -439,152 +450,5 @@ $sudo ssh-copy-id -i ~/.ssh/id_rsa.pub slave4.
 ```
 $sudo su
 $ssh hostname
-```
-
-## Maria DB Installation
-https://www.cloudera.com/documentation/enterprise/latest/topics/install_cm_mariadb.html#install_cm_mariadb_install
-
-#### 1.     Maria DB 설치
-```
-$ sudo yum install mariadb-server
-```
- 
-#### 2.     마리아디비 서버 스탑
-```
-$ sudo systemctl stop mariadb
-``` 
- 
-#### 3. 	컨피그 파일 세팅
-my.cnf (/etc/my.cnf by default).(가이드 권장 사항이나 수정할 필요없음)
-===========================================================
-
-
-```
-
-[mysqld]
-datadir=/var/lib/mysql
-socket=/var/lib/mysql/mysql.sock
-transaction-isolation = READ-COMMITTED
-# Disabling symbolic-links is recommended to prevent assorted security risks;
-# to do so, uncomment this line:
-symbolic-links = 0
-# Settings user and group are ignored when systemd is used.
-# If you need to run mysqld under a different user or group,
-# customize your systemd unit file for mariadb according to the
-# instructions in http://fedoraproject.org/wiki/Systemd
- 
-key_buffer = 16M
-key_buffer_size = 32M
-max_allowed_packet = 32M
-thread_stack = 256K
-thread_cache_size = 64
-query_cache_limit = 8M
-query_cache_size = 64M
-query_cache_type = 1
- 
-max_connections = 550
-#expire_logs_days = 10
-#max_binlog_size = 100M
- 
-#log_bin should be on a disk with enough free space.
-#Replace '/var/lib/mysql/mysql_binary_log' with an appropriate path for your
-#system and chown the specified folder to the mysql user.
-log_bin=/var/lib/mysql/mysql_binary_log
- 
-#In later versions of MariaDB, if you enable the binary log and do not set
-#a server_id, MariaDB will not start. The server_id must be unique within
-#the replicating group.
-server_id=1
- 
-binlog_format = mixed
- 
-read_buffer_size = 2M
-read_rnd_buffer_size = 16M
-sort_buffer_size = 8M
-join_buffer_size = 8M
- 
-# InnoDB settings
-innodb_file_per_table = 1
-innodb_flush_log_at_trx_commit  = 2
-innodb_log_buffer_size = 64M
-innodb_buffer_pool_size = 4G
-innodb_thread_concurrency = 8
-innodb_flush_method = O_DIRECT
-innodb_log_file_size = 512M
- 
-[mysqld_safe]
-log-error=/var/log/mariadb/mariadb.log
-pid-file=/var/run/mariadb/mariadb.pid
- 
-#
-# include all files from the config directory
-#
-!includedir /etc/my.cnf.d
-
-```
- ===========================================================
-
-
-#### 4.   부팅시 마리아 디비 시작 확인
-```
-$ sudo systemctl enable mariadb
-```
- 
-#### 5.   마리아디비 실행
-```
-$ sudo systemctl start mariadb
-```
- 
-#### 6.     Maria DB rootpassword 및 보안 세팅 실행
-```
-/usr/bin/mysql_secure_installation
-$ sudo /usr/bin/mysql_secure_installation
-```
-```
-아래 실행 화면 따라 설치
-[...]
-Enter current password for root (enter for none):
-OK, successfully used password, moving on...
-[...]
-Set root password? [Y/n] Y
-New password:
-Re-enter new password:
-[...]
-Remove anonymous users? [Y/n] Y
-[...]
-Disallow root login remotely? [Y/n] N
-[...]
-Remove test database and access to it [Y/n] Y
-[...]
-Reload privilege tables now? [Y/n] Y
-[...]
-All done!  If you've completed all of the above steps, your MariaDB
-installation should now be secure.
- 
-Thanks for using MariaDB!
-```
-
-####  7. MariaDB를 위한 Mysql JDBC 드라이버 설치
-JDBC 드라이버 다운로드
-```
-$ wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
-```
-
-JDBC 드라이버 압축해제
-```
-$ tar zxvf mysql-connector-java-5.1.46.tar.gz
-```
-/usr/share/java로 JDBC드라이버 복사 경로 없을시 생성
-```
-$ sudo mkdir -p /usr/share/java/
-$ cd mysql-connector-java-5.1.46
-$ sudo cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
- ```
- 
-####  8.     데티어베이스 생성
-8-1  root 유저 로그인
-```
-$ mysql -u root -p
-Enter password:
 ```
 
