@@ -5,7 +5,8 @@
  <li> 09277 박한주 </li>
  <li> 09340 이호영 </li>
 </ul>
- 
+
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/Hyun-SookGo.jpg)
 ![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
 
 
