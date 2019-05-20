@@ -150,7 +150,6 @@ GRANT ALL ON sentry.* TO  'sentry'@'%' IDENTIFIED BY 'sentry';
 GRANT ALL ON nav.* TO  'nav'@'%' IDENTIFIED BY 'nav';  
 GRANT ALL ON navms.* TO  'navms'@'%' IDENTIFIED BY 'navms';  
 GRANT ALL ON oozie.* TO  'oozie'@'%' IDENTIFIED BY 'oozie';  
-</ol>
 ```
 
 #### Set up the Cloudera Manager Database
@@ -333,7 +332,7 @@ $ sudo systemctl start mariadb
 /usr/bin/mysql_secure_installation
 $ sudo /usr/bin/mysql_secure_installation
 ```
-
+```
 아래 실행 화면 따라 설치
 [...]
 Enter current password for root (enter for none):
@@ -355,7 +354,7 @@ All done!  If you've completed all of the above steps, your MariaDB
 installation should now be secure.
  
 Thanks for using MariaDB!
-
+```
 
 ####  7. MariaDB를 위한 Mysql JDBC 드라이버 설치
 JDBC 드라이버 다운로드
