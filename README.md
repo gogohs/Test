@@ -125,8 +125,9 @@ $sudo yum install cloudera-manager-daemons cloudera-manager-agent
 <li>JDBC Connector 설치</li>
 <li>필요한 계정 생성</li> 
 </ol>
-##### table
+
 ```
+Table
 CREATE DATABASE scm DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE amon DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE rman DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
@@ -136,20 +137,20 @@ CREATE DATABASE sentry DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE nav DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE navms DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE oozie DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
-
 ```
 
-##### 권한
 ```
-GRANT ALL ON scm.* TO  'scm'@'%' IDENTIFIED BY 'scm';
-GRANT ALL ON amon.* TO  'amon'@'%' IDENTIFIED BY 'amon';
-GRANT ALL ON rman.* TO  'rman'@'%' IDENTIFIED BY 'rman';
-GRANT ALL ON hue.* TO  'hue'@'%' IDENTIFIED BY 'hue';
-GRANT ALL ON metastore.* TO  'hive'@'%' IDENTIFIED BY 'hive';
-GRANT ALL ON sentry.* TO  'sentry'@'%' IDENTIFIED BY 'sentry';
-GRANT ALL ON nav.* TO  'nav'@'%' IDENTIFIED BY 'nav';
-GRANT ALL ON navms.* TO  'navms'@'%' IDENTIFIED BY 'navms';
-GRANT ALL ON oozie.* TO  'oozie'@'%' IDENTIFIED BY 'oozie';
+권한
+GRANT ALL ON scm.* TO  'scm'@'%' IDENTIFIED BY 'scm';   
+GRANT ALL ON amon.* TO  'amon'@'%' IDENTIFIED BY 'amon';   
+GRANT ALL ON rman.* TO  'rman'@'%' IDENTIFIED BY 'rman';  
+GRANT ALL ON hue.* TO  'hue'@'%' IDENTIFIED BY 'hue';  
+GRANT ALL ON metastore.* TO  'hive'@'%' IDENTIFIED BY 'hive';  
+GRANT ALL ON sentry.* TO  'sentry'@'%' IDENTIFIED BY 'sentry';  
+GRANT ALL ON nav.* TO  'nav'@'%' IDENTIFIED BY 'nav';  
+GRANT ALL ON navms.* TO  'navms'@'%' IDENTIFIED BY 'navms';  
+GRANT ALL ON oozie.* TO  'oozie'@'%' IDENTIFIED BY 'oozie';  
+</ol>
 ```
 
 #### Set up the Cloudera Manager Database
@@ -249,7 +250,10 @@ $ sudo systemctl stop mariadb
 #### 3. 	컨피그 파일 세팅
 my.cnf (/etc/my.cnf by default).(가이드 권장 사항이나 수정할 필요없음)
 ===========================================================
+
+
 ```
+
 [mysqld]
 datadir=/var/lib/mysql
 socket=/var/lib/mysql/mysql.sock
@@ -309,6 +313,7 @@ pid-file=/var/run/mariadb/mariadb.pid
 # include all files from the config directory
 #
 !includedir /etc/my.cnf.d
+
 ```
  ===========================================================
 
