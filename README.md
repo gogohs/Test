@@ -6,7 +6,9 @@
  <li> 09340 이호영 </li>
 </ul>
 
-![Alt text](https://github.com/gogohs/skccBigData/blob/master/Hyun-SookGo.jpg)
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/kangyounghun2.png)
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/HyunSook.PNG)
+![Alt text](https://github.com/gogohs/skccBigData/blob/master/Hanjoo.PNG)
 ![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
 
 
