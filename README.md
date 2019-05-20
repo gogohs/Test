@@ -5,7 +5,7 @@
  <li> 09277 박한주 </li>
  <li> 09340 이호영 </li>
  
-![Alt text](https://github.com/gogohs/skccbigData/picture.png) 
+![Alt text](https://github.com/gogohs/skccbigData/kang younghun.png) 
 ![Alt text](https://github.com/Lee-Ho-Young/Bigdata_0416/blob/master/picture.png)
 </ul>
 
