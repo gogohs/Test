@@ -13,6 +13,10 @@
 
 
 
+## 실습목표
+<ul>
+ <li> Cloudera Manager를 사용한 Hadoop Cluster 구성 </li>
+</ul>
 
 
 ## 설치기준
