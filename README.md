@@ -528,23 +528,17 @@ $ netstat -antp | grep 7180                                     //서버의 defa
  > RDB를 사용하는 Component List
     [참고]https://www.cloudera.com/documentation/enterprise/latest/topics/cm_ig_installing_configuring_dbs.html
 
->> Oozie Server
-
->> Sqoop Server
-
->> Activity Monitor
-
->> Reports Manager
-
->> Hive Metastore Server
-
->> Hue Server
-
->> Sentry Server
-
->> Cloudera Navigator Audit Server
-
->> Cloudera navigator metadata Server
+<ul>
+ <li> Oozie Server </li>
+ <li> Sqoop Server </li>
+ <li> Activity Monitor </li>
+ <li> Reports Manager </li>
+ <li> Hive Metastore Server </li>
+ <li> Hue Server </li>
+ <li> Sentry Server </li>
+ <li> Cloudera Navigator Audit Server </li>
+ <li> Cloudera navigator metadata Server </li>
+</ul>
  
  > Recommended Cluster setting
   [참고]https://www.cloudera.com/documentation/enterprise/5-15-x/topics/cm_ig_host_allocations.html#host_role_assignments
