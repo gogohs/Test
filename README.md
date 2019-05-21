@@ -434,7 +434,7 @@ CREATE DATABASE nav DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE navms DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 CREATE DATABASE oozie DEFAULT CHARACTER SET DEFAULT COLLATE utf8_general_ci;
 
-<권한>
+<계정생성 및 권한부여>
 GRANT ALL ON scm.* TO  'scm'@'%' IDENTIFIED BY 'scm';   
 GRANT ALL ON amon.* TO  'amon'@'%' IDENTIFIED BY 'amon';   
 GRANT ALL ON rman.* TO  'rman'@'%' IDENTIFIED BY 'rman';  
@@ -476,18 +476,15 @@ $ netstat -antp | grep 7180                                     //서버의 defa
  > a. 체크하지 않음
 
 #### 5. Enter Login Credentials
- > a. root 계정으로 접속하기 위한 비밀번호를 설정해야 함
- > b. root로 접속 / 비밀번호 : admin [현재 세팅이 그렇게 되었음]
+ > a. root 계정 비밀번호를 입력
+ > b. root로 접속 / 비밀번호 : admin
 
 #### 6. Install Agents
-  > a. 5개 서버의 [Private IP FQDN] 정보 5줄을 입력하고 다음으로 넘어가면 검색결과 확인
-
+  > a. 5개 서버의 [Private IP] 정보 5줄을 입력하고 다음으로 넘어가면 검색결과 확인
 
 #### 7.Install Parcels 
-  > a. 여기 단계에서 Disk Full 발생하여 Roll-back 재시작의 무한반복 
+  > a. 기본 패키지 설치
   
-
-![Alt text](https://github.com/gogohs/skccBigData/blob/master/result1.png)
-![Alt text](https://github.com/gogohs/skccBigData/blob/master/result2.png)
+  
 
 
