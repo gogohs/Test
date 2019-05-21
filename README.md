@@ -468,25 +468,33 @@ $ netstat -antp | grep 7180                                     //서버의 defa
 
 #### 1.Specify hosts for your CDH cluster installation
 
+
 #### 2.Select Repository
+
+
 #### 3.Accept JDK License
  > a. cloudera manager 호스트에만 JDK를 깔았기 때문에 설치하기로 설정해야 함
 
+
 #### 4. Single User Mode
  > a. 체크하지 않음
+
 
 #### 5. Enter Login Credentials
  > a. root 계정 비밀번호를 입력
  > b. root로 접속 / 비밀번호 : admin
 
+
 #### 6. Install Agents
-  > a. 5개 서버의 [Private IP] 정보 5줄을 입력하고 다음으로 넘어가면 검색결과 확인
+ > a. 5개 서버의 [Private IP] 정보 5줄을 입력하고 다음으로 넘어가면 검색결과 확인
+
 
 #### 7. Install Parcels 
-  > a. 기본 패키지 설치
+ > a. 기본 패키지 설치
+  
   
 #### 8. Select Services 
-  > 아래의 옵션들 중에서 하나를 선택하여 설치 진행 [Cloudera Navigator 설치안함]
+ > 아래의 옵션들 중에서 하나를 선택하여 설치 진행 [Cloudera Navigator 설치안함]
 
 	Core Hadoop
 	HDFS, YARN (MapReduce 2 Included), ZooKeeper, Oozie, Hive, and Hue
@@ -510,11 +518,14 @@ $ netstat -antp | grep 7180                                     //서버의 defa
 	Choose your own services. Services required by chosen services will automatically be included. Flume can be added 
 	after your initial cluster has been set up.
 
+
 #### 9. Assign Roles 
 
-  > 8번 단계에서 선택한 서비스들의 각 요소들을 어느 서버에 배치할 것인지 선택
-  > DB를 사용하는 서비스들의 경우 JDBC Connector가 설치된 곳에 배치해야만 한다.
-  > RDB를 사용하는 Component List
+ > 8번 단계에서 선택한 서비스들의 각 요소들을 어느 서버에 배치할 것인지 선택
+
+ > DB를 사용하는 서비스들의 경우 JDBC Connector가 설치된 곳에 배치해야만 한다.
+ 
+ > RDB를 사용하는 Component List
     [참고]https://www.cloudera.com/documentation/enterprise/latest/topics/cm_ig_installing_configuring_dbs.html
   	>> Oozie Server
 	>> Sqoop Server
@@ -525,7 +536,9 @@ $ netstat -antp | grep 7180                                     //서버의 defa
 	>> Sentry Server
 	>> Cloudera Navigator Audit Server
 	>> Cloudera navigator metadata Server
-  > Recommended Cluster setting
+ 
+ > Recommended Cluster setting
   [참고]https://www.cloudera.com/documentation/enterprise/5-15-x/topics/cm_ig_host_allocations.html#host_role_assignments
-  ![Alt text](https://github.com/gogohs/skccBigData/blob/master/recommended_set.PNG)
+ 
+ ![Alt text](https://github.com/gogohs/skccBigData/blob/master/recommended_set.PNG)
   
