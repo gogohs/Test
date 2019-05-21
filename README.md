@@ -252,9 +252,23 @@ $ sudo sysctl -w vm.swappiness=1   // 스왑값
 $ sudo wget https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo -P /etc/yum.repos.d/
 ```
 
-2. Review the Repo file for exact Version
+2. change the baseurl within cloudera-manager.repo to fit the version you want to install
 ```
-$
+$ cd /etc/yum.repos.d/cloudera-manager.repo
+
+<AS-IS>
+# Packages for Cloudera Manager, Version 5, on RedHat or CentOS 7 x86_64         
+name=Cloudera Manager
+baseurl=https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/5/
+gpgkey =https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/RPM-GPG-KEY-cloudera 
+gpgcheck = 1
+
+<TO-BE>
+# Packages for Cloudera Manager, Version 5, on RedHat or CentOS 7 x86_64         
+name=Cloudera Manager
+baseurl=https://archive.cloudera.com/cm5/redhat/6/x86_64/cm/5.15.2/
+gpgkey =https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/RPM-GPG-KEY-cloudera 
+gpgcheck = 1
 ```
 
 2. Import the repository signing GPG key [RHEL 7]
