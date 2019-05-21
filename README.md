@@ -159,12 +159,12 @@ private ip4 slave3
 private ip5 slave4
 ```
 
-#### 4. 모든 서버에서 sshd_config 파일 편집
+#### 4. 모든 서버에서 서버의 실제 Hostname 변경
 
 ```
-$ sudo vi /etc/ssh/sshd_config 
+$ hostname    //현재 세팅된 서버의 호스트명 출력
+$ hostnamectl set-hostname master //호스트명을 master로 설정
 ```
--- PasswordAuthentication yes로 설정 및 저장.
 
 #### 5. 모든 서버에서 sshd_config 파일 편집
 
