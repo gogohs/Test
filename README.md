@@ -23,7 +23,7 @@
 <ul>
  <li> CENTOS 7 </li>
  <li> JDK 1.78 </li>
- <li> CDH 5.16</li>
+ <li> CDH 5.15</li>
 </ul>
 
 ## AWS Instance 접속
@@ -237,9 +237,15 @@ $ sudo sysctl -w vm.swappiness=1   // 스왑값
 [참고]https://www.cloudera.com/documentation/enterprise/5-15-x/topics/install_cm_server.html
 
 ### Configure a repository for cloudera manager
-1. Download the cloudera-manager.repo file for your OS version to the /etc/yum.repos.d/ directory on the Cloudera Manager Server host
+
+1. Download the cloudera-manager.repo file for your OS version to the /etc/yum.repos.d/ directory on the Cloudera Manager Server host [CDH가 아니라 cloudera-manager를 다운받아야 함]
 ```
-$sudo wget https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/cloudera-cdh5.repo -P /etc/yum.repos.d/
+$ sudo wget https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo -P /etc/yum.repos.d/
+```
+
+2. Review the Repo file for exact Version
+```
+$
 ```
 
 2. Import the repository signing GPG key [RHEL 7]
