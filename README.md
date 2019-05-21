@@ -78,8 +78,8 @@ $ sudo yum install -y wget
 </ul>
 
 ```
-$ systemctl stop firewalld.service
-$ systemctl disable firewalld.service
+$ systemctl stop firewalld
+$ systemctl disable firewalld
 ```
 
 ### 3. Selinux 정지 [보안 프로그램]
@@ -144,9 +144,8 @@ $ ntpq -p
 #### 2. 모든 서버의 root계정 passwd 설정.
 
 ```
-$sudo su 
+$passwd root //root계정의 비밀번호 설정하기
 ```
--- passwd 를 admin으로 입력.
 
 #### 3. 모든 서버에서 host 파일에 서버정보입력
 -- /etc로 이동.
@@ -167,31 +166,41 @@ $ sudo vi /etc/ssh/sshd_config
 ```
 -- PasswordAuthentication yes로 설정 및 저장.
 
-#### 5. 설정 후 서비스 restart
+#### 5. 모든 서버에서 sshd_config 파일 편집
 
 ```
-$sudo service sshd restart
+$ sudo vi /etc/ssh/sshd_config 
+```
+-- PasswordAuthentication yes로 설정 및 저장.
+
+
+#### 6. 설정 후 서비스 restart
+
+```
+$ sudo service sshd restart
 ```
 
-#### 6. (master노드만) ssh 용 public key 생성하기     
+#### 7. (master노드만) ssh 용 public key 생성하기     
 
+keygen의 결과로 2개의 파일이 새로 생긴 것을 알 수 있다.
 ``` 
-$ssh-keygen
+$ssh-keygen [이후에 입력창에는 엔터만 계속 누르면 된다.]
 ```
 
-#### 7. 1~5번까지 각 노드에서 완료 후 master노드에서 slave노드로 public key 정보 복사하기.
+#### 8. 1~5번까지 각 노드에서 완료 후 master노드에서 slave노드로 public key 정보 복사하기.
 
 ```
-$cd /.ssh 이동
-$sudo ssh-copy-id -i ~/.ssh/id_rsa.pub slave4.
+$ cd ~/.ssh 이동
+$ ssh-copy-id root@slave1 [ssh-copy-id username@remote_host]
 ```
--- (permission denied 문제가 발생하면 앞의 config 파일 및 서비스 재시작 여부 확인)
-     
-#### 8.  master root계정에서 ssh로 slave에 접속하기.
+-- permission denied 문제가 발생하면 앞의 config 파일 및 서비스 재시작 여부 확인
+   [6번 과정에서의 오류가 있었을 수 있기 때문에, 오류가 나는 호스트에 접속하여 확인]
+   
+   
+#### 9.  master root계정에서 ssh로 slave에 접속 [설정여부 확인]
 
 ```
-$sudo su
-$ssh hostname
+$ ssh slave1
 ```
 
 ### 6. 추가적인 설정 [성능이슈]
