@@ -550,3 +550,124 @@ $ netstat -antp | grep 7180                                     //서버의 defa
    ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정1.PNG)
    ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정2.PNG)
    ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정3.PNG)
+   
+   
+## 실습환경 세팅
+ 
+### 1. training 계정 생성
+ 
+#### 1-1. Linux 계정생성
+```
+$ adduser training
+$ passwd training
+$ usermod -aG wheel training
+## 원래는 visudo에서 주석해제 단계가 있는데 우선은 하지말자
+```
+ 
+#### 1-2. HDFS 계정생성
+
+<수동생성>
+```
+$ sudo -u hdfs hdfs dfs -mkdir /user/training 	         //계정생성
+$ sudo -u hdfs hdfs dfs -chown training /user/training   //계정소유자 변경
+
+## 참고사항 : HDFS디렉토리의 권한을 변경하고 싶을경우
+$ sudo -u hdfs hdfs dfs -chmod 777 /user/training
+```
+
+<자동생성>
+Hue UI에 처음 접속을 training 계정으로 할 경우, training계정은 자동으로 HUE admin 계정이 되고
+자동으로 HDFS 계정도 생성된다.
+
+
+### 2. local data file [all.zip]
+ 
+ [Git Bash] First, go to training_materials directory and then upload.
+ ```
+$ scp -r training_materials training@13.209.155.34:/home/training
+ ```
+
+### 3. setup.sh
+
+#### 3-1. setup.sh 돌려보면 mysql의 training 계정과 관련된 오류 발생
+```
+[training@master scripts]$ sh setup.sh
+[setup.sh] Course setup started at: Tue May 21 14:50:25 KST 2019
+[setup.sh] Setting up course environment variables
+[setup.sh] Setting up the loudacre database in MySQL
+ERROR 1044 (42000) at line 1: Access denied for user 'training'@'localhost' to database 'loudacre'
+ERROR 1044 (42000) at line 1: Access denied for user 'training'@'localhost' to database 'loudacre'
+ERROR 1044 (42000): Access denied for user 'training'@'localhost' to database 'loudacre'
+[setup.sh] Setting up iPython notebook/Jupyter
+[setup.sh] Setting up Hive/Impala table for demo/exercises
+put: `/user/hive/warehouse/accounts/part-m-00000': File exists
+put: `/user/hive/warehouse/accounts/part-m-00001': File exists
+put: `/user/hive/warehouse/accounts/part-m-00002': File exists
+put: `/user/hive/warehouse/accounts/part-m-00003': File exists
+put: `/user/hive/warehouse/accounts/part-m-00004': File exists
+Starting Impala Shell without Kerberos authentication
+Error connecting: TTransportException, Could not connect to master:21000
+Not connected to Impala, could not execute queries.
+[setup.sh] Course setup completed at: Tue May 21 14:50:27 KST 2019
+```
+
+#### 3-2. MariaDB에 training 게정을 생성
+
+```
+$ mysql -u root -p
+
+## 모든 호스트에서 접속하는(%) training계정에, 모든 Database에 대한, 모든 권한 부여
+$ GRANT ALL ON *.* TO 'training'@'%' IDENTIFIED BY 'training';
+$ FLUSH PRIVILEGES;
+
+## training 계정에 대한 권한을 중복으로 부여하면, 아래의 결과가 2줄이 나오고, 1줄을 지워주면 정상작동
+$ select * from mysql.user where user ='training';
++-----------+----------+
+| Host      | User     |
++-----------+----------+
+| %         | training |
+| localhost | training |
++-----------+----------+
+```
+
+#### 3-3. training DB계정 생성 후 setup.sh 실행
+```
+[training@master scripts]$ sh setup.sh
+[setup.sh] Course setup started at: Tue May 21 15:31:39 KST 2019
+[setup.sh] Setting up course environment variables
+[setup.sh] Setting up the loudacre database in MySQL
+[setup.sh] Setting up iPython notebook/Jupyter
+[setup.sh] Setting up Hive/Impala table for demo/exercises
+put: `/user/hive/warehouse/accounts/part-m-00000': File exists
+put: `/user/hive/warehouse/accounts/part-m-00001': File exists
+put: `/user/hive/warehouse/accounts/part-m-00002': File exists
+put: `/user/hive/warehouse/accounts/part-m-00003': File exists
+put: `/user/hive/warehouse/accounts/part-m-00004': File exists
+Starting Impala Shell without Kerberos authentication
+Connected to master:21000
+Server version: impalad version 2.12.0-cdh5.15.2 RELEASE (build bbf711e1a54a8451225a3f8c82f83d78bdac23d2)
+Query: -- # setup accounts table
+DROP TABLE IF EXISTS accounts
+Query submitted at: 2019-05-21 15:31:42 (Coordinator: http://master:25000)
+Query progress can be monitored at: http://master:25000/query_plan?query_id=d3468dc4e687ddcc:7a3d00200000000
+Fetched 0 row(s) in 3.84s
+Query: CREATE EXTERNAL TABLE accounts (
+	acct_num INT,
+	acct_create_dt TIMESTAMP,
+	acct_close_dt  TIMESTAMP,
+	first_name VARCHAR(255)  ,
+	last_name VARCHAR(255) ,
+	address  VARCHAR(255) ,
+	city  VARCHAR(255) ,
+	state VARCHAR(255) ,
+	zipcode VARCHAR(255) ,
+	phone_number VARCHAR(255) ,
+	created TIMESTAMP  ,
+	modified TIMESTAMP)
+	ROW FORMAT DELIMITED
+	FIELDS TERMINATED BY ','
+Fetched 0 row(s) in 0.03s
+[setup.sh] Course setup completed at: Tue May 21 15:31:45 KST 2019
+```
+
+## File-system / Database 데이터를 사용한 자유로운 데이터 분석시간
