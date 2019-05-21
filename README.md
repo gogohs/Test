@@ -545,3 +545,8 @@ $ netstat -antp | grep 7180                                     //서버의 defa
  
  ![Alt text](https://github.com/gogohs/skccBigData/blob/master/recommended_set.PNG)
   
+ 
+ > 실습결과
+   ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정1.PNG)
+   ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정2.PNG)
+   ![Alt text](https://github.com/gogohs/skccBigData/blob/master/service설정3.PNG)
